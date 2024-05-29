@@ -8,16 +8,16 @@ public class MainFrame implements Runnable {
         JFrame frame = new JFrame("Discount GTA");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(700, 500);
-        frame.setLocationRelativeTo(null); // auto-centers frame in screen
+        frame.setLocationRelativeTo(null);
 
-        // create and add panel
+
         panel = new GraphicsPanel(name);
         frame.add(panel);
 
-        // display the frame
+
         frame.setVisible(true);
 
-        // start thread, required for animation
+
         Thread thread = new Thread(this);
         thread.start();
     }

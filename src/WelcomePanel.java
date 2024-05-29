@@ -17,6 +17,7 @@ public class WelcomePanel extends JPanel implements ActionListener {
     private JFrame enclosingFrame;
     private BufferedImage background;
 
+
     public WelcomePanel(JFrame frame) {
         enclosingFrame = frame;
         try {
@@ -33,9 +34,11 @@ public class WelcomePanel extends JPanel implements ActionListener {
         add(submitButton);
         add(clearButton);
         add(tutorialButton);
+        add(backButton);
         submitButton.addActionListener(this);
         clearButton.addActionListener(this);
         tutorialButton.addActionListener(this);
+        backButton.addActionListener(this);
     }
 
     @Override
@@ -52,6 +55,8 @@ public class WelcomePanel extends JPanel implements ActionListener {
         submitButton.setLocation(260, 140);
         clearButton.setLocation(360, 140);
         tutorialButton.setLocation(300, 300);
+        backButton.setLocation(300, 300);
+        backButton.setVisible(false);
     }
     public void tutorialGraphics(Graphics g) {
         super.paintComponent(g);
@@ -71,12 +76,19 @@ public class WelcomePanel extends JPanel implements ActionListener {
             } else if (button == clearButton) {
                 textField.setText("");
             } else if (button == tutorialButton) {
+                // ??
                 submitButton.setVisible(false);
                 clearButton.setVisible(false);
                 tutorialButton.setVisible(false);
                 textField.setVisible(false);
+                backButton.setVisible(true);
             } else {
-
+                // ??
+                submitButton.setVisible(true);
+                clearButton.setVisible(true);
+                tutorialButton.setVisible(true);
+                textField.setVisible(true);
+                backButton.setVisible(false);
             }
         }
     }
