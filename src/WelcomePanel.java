@@ -39,6 +39,7 @@ public class WelcomePanel extends JPanel implements ActionListener {
         clearButton.addActionListener(this);
         tutorialButton.addActionListener(this);
         backButton.addActionListener(this);
+        backButton.setVisible(false);
     }
 
     @Override
@@ -48,15 +49,20 @@ public class WelcomePanel extends JPanel implements ActionListener {
         g.setFont(new Font("Arial", Font.BOLD, 25));
         g.setColor(Color.WHITE);
         g.drawString("Welcome to Discount GTA V!", 175, 35);
-        g.setFont(new Font("Arial", Font.BOLD, 16));
-        g.setColor(Color.BLACK);
-        g.drawString("Please enter your name:", 250, 100);
-        textField.setLocation(240, 110);
-        submitButton.setLocation(260, 140);
-        clearButton.setLocation(360, 140);
-        tutorialButton.setLocation(300, 300);
-        backButton.setLocation(300, 300);
-        backButton.setVisible(false);
+        if(backButton.isVisible()==true) {
+            backButton.setLocation(300, 300);
+            g.setFont(new Font("Arial", Font.BOLD, 18));
+            g.drawString("Up: W | Down: S | Left: A | Right: D", 270, 180);
+        } else {
+            g.setFont(new Font("Arial", Font.BOLD, 16));
+            g.setColor(Color.BLACK);
+            g.drawString("Please enter your name:", 250, 100);
+            textField.setLocation(240, 110);
+            submitButton.setLocation(260, 140);
+            clearButton.setLocation(360, 140);
+            tutorialButton.setLocation(300, 300);
+            backButton.setVisible(false);
+        }
     }
     public void tutorialGraphics(Graphics g) {
         super.paintComponent(g);
