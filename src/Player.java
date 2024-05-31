@@ -12,7 +12,7 @@ public class Player {
     private BufferedImage sprite;
     public Player() {
         try {
-            sprite = ImageIO.read(new File("src/Adam_Stoped.png"));
+            sprite = ImageIO.read(new File("src/assets/Adam_Stoped.png"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

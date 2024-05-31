@@ -21,7 +21,7 @@ public class WelcomePanel extends JPanel implements ActionListener {
     public WelcomePanel(JFrame frame) {
         enclosingFrame = frame;
         try {
-            background = ImageIO.read(new File("src/GTALoadingScreen.png"));
+            background = ImageIO.read(new File("src/assets/GTALoadingScreen.png"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
