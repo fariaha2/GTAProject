@@ -49,10 +49,14 @@ public class WelcomePanel extends JPanel implements ActionListener {
         g.setFont(new Font("Arial", Font.BOLD, 25));
         g.setColor(Color.WHITE);
         g.drawString("Welcome to Discount GTA V!", 175, 35);
-        if(backButton.isVisible()==true) {
+        if(backButton.isVisible()) {
             backButton.setLocation(300, 300);
+            g.setColor(Color.BLACK);
             g.setFont(new Font("Arial", Font.BOLD, 18));
-            g.drawString("Up: W | Down: S | Left: A | Right: D", 270, 180);
+            g.drawString("Up: W | Down: S | Left: A | Right: D", 200, 80);
+            g.drawString("There is no true objective in this game,", 200, 100);
+            g.drawString(" just have fun!", 200, 120);
+
         } else {
             g.setFont(new Font("Arial", Font.BOLD, 16));
             g.setColor(Color.BLACK);

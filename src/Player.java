@@ -21,6 +21,7 @@ public class Player {
         xCoord=350;
         yCoord=250;
     }
+
     public void moveRight() {
         if (xCoord + MOVE_AMT <= 700) {
             xCoord += MOVE_AMT;
