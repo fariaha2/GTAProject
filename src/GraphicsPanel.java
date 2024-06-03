@@ -15,7 +15,10 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     private JButton outside;
     private JButton menu;
     private JButton home;
+    private JButton slots;
+    private JButton blackjack;
     private BufferedImage background;
+    private BufferedImage food;
     private String name;
     private Player player;
     private boolean[] pressedKeys;
@@ -26,11 +29,14 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     private boolean isOutside = false;
     private boolean bakeryTrue=false;
     private boolean buying=false;
+    private boolean atCasino=false;
     private BufferedImage dialogueBox;
     private BufferedImage phoneImage;
     private BufferedImage internetPage;
-    private int count=1;
+    private BufferedImage farm;
+    private int count=-1;
     private ArrayList<Rectangle> menuItems;
+    private ArrayList<String> fileNames;
     private ArrayList<Properties> properties;
 
 
@@ -43,6 +49,8 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         } catch (IOException g) {
             System.out.println(g.getMessage());
         }
+        fileNames = new ArrayList<>();
+        setFileNames();
         setUpProperties();
         name = n;
         player = new Player();
@@ -58,6 +66,10 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         menu = new JButton("Menu");
         atBeach = new JButton("Go to Beach");
         home = new JButton("Go Home");
+        slots = new JButton("Hit the Slots");
+        blackjack = new JButton("Play Blackjack");
+        slots.setFocusable(false);
+        blackjack.setFocusable(false);
         home.setFocusable(false);
         atBeach.setFocusable(false);
         menu.setFocusable(false);
@@ -72,6 +84,8 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         add(menu);
         add(atBeach);
         add(home);
+        add(slots);
+        add(blackjack);
         phone.addActionListener(this);
         bakeryButton.addActionListener(this);
         goToCasino.addActionListener(this);
@@ -79,11 +93,15 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         menu.addActionListener(this);
         atBeach.addActionListener(this);
         home.addActionListener(this);
+        slots.addActionListener(this);
+        blackjack.addActionListener(this);
         menu.setVisible(false);
         atBeach.setVisible(false);
         bakeryButton.setVisible(false);
         goToCasino.setVisible(false);
         home.setVisible(false);
+        slots.setVisible(false);
+        blackjack.setVisible(false);
         internetButton = new Rectangle(350, 250, 40, 40);
         purchases = new Rectangle(280, 100, 200, 40);
         menuItems = new ArrayList<>();
@@ -107,7 +125,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if(count<=2) {
+        if(count<0) {
             g.drawImage(background, 0, 0, null);
         }
         g.setFont(new Font("Arial", Font.BOLD, 25));
@@ -145,7 +163,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         } else if(bakeryTrue) {
             atBeach.setVisible(false);
             bakeryButton.setVisible(false);
-            if(count==1 || count==2) {
+            if(count==-1 || count==-2) {
                 g.drawImage(dialogueBox, 165, 230, this);
                 g.setColor(Color.WHITE);
                 g.setFont(new Font("Arial", Font.ITALIC, 25));
@@ -153,19 +171,32 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             }
             g.setFont(new Font("ARIAL", Font.BOLD, 25));
             g.setColor(Color.pink);
-            if(count==1) {
+            if(count==-1) {
                 g.drawString("Welcome to the bakery!", 200, 300);
-            } else if(count==2){
+            } else if(count==-2){
                 g.drawString("What would you like ", 200, 270);
                 g.drawString("to order?", 200, 310);
                 menu.setVisible(true);
                 menu.setLocation(550, 270);
-            } else {
+            } else if(count<0){
                 g.drawImage(background, 20, 0, null);
                 g.setColor(Color.black);
                 g.drawString("Click to order", 480, 450);
 
+            } else {
+                try {
+                    background = ImageIO.read(new File("src/DialogueBox.png"));
+                } catch (IOException gjhfj) {
+                    gjhfj.getMessage();
+                }
             }
+        } else if(atCasino) {
+            g.setFont(new Font("Arial", Font.BOLD, 30));
+            g.drawString("Welcome! What are you trying to do?", 80, 150);
+            slots.setVisible(true);
+            blackjack.setVisible(true);
+            slots.setLocation(135, 175);
+            blackjack.setLocation(435, 175);
         } else if(isOutside) {
             try {
                 background = ImageIO.read(new File("src/assets/Outside.png"));
@@ -211,6 +242,39 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             }
         }
     }
+    public void setFileNames() {
+        fileNames.add("0_apple_pie_dish");
+        fileNames.add("1_bacon_dish");
+        fileNames.add("2_burger_napkin");
+        fileNames.add("3_cheesecake_dish");
+        fileNames.add("4_chocolatecake_dish");
+        fileNames.add("5_cookies_dish");
+        fileNames.add("6_donut_dish");
+        fileNames.add("7_dumplings_dish");
+        fileNames.add("8_eggtart_dish");
+        fileNames.add("9_frenchfries_dish");
+        fileNames.add("10_fruitcake_dish");
+        fileNames.add("11_garlicbread_dish");
+        fileNames.add("12_giantgummybear_dish");
+        fileNames.add("13_gingerbreadman_dish");
+        fileNames.add("14_hotdog_dish");
+        fileNames.add("15_icecream_bowl");
+        fileNames.add("16_jelly_dish");
+        fileNames.add("17_lemonpie_dish");
+        fileNames.add("18_macncheese_dish");
+        fileNames.add("19_nacho_dish");
+        fileNames.add("20_pudding_dish");
+        fileNames.add("21_pancakes_dish");
+        fileNames.add("22_pizza_dish");
+        fileNames.add("23_popcorn_bowl");
+        fileNames.add("24_roastedchicken_dish");
+        fileNames.add("25_ramen");
+        fileNames.add("26_salmon_dish");
+        fileNames.add("27_strawberrycake_dish");
+        fileNames.add("28_sandwich_dish");
+        fileNames.add("29_sushi_dish");
+        fileNames.add("30_waffle_dish");
+    }
     public void setUpProperties() {
         properties = new ArrayList<>();
         /*
@@ -238,7 +302,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     }
     public void mouseClicked(MouseEvent e) {
         if(bakeryTrue) {
-            count++;
+            count--;
         }
     }
     public void mousePressed(MouseEvent e) { }
@@ -254,10 +318,10 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
 
             }
         }
-        for(int i=0; i<menuItems.size(); i++) {
-            if(menuItems.get(i).contains(e.getPoint())) {
-
-            }
+       for(int i=0; i<menuItems.size(); i++) {
+           if(menuItems.get(i).contains(e.getPoint())) {
+               count=i;
+           }
         }
     }
     public void mouseEntered(MouseEvent e) { }
@@ -286,6 +350,8 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             } else if(button==outside) {
                 isOutside=true;
             } else if(button==bakeryButton) {
+                goToCasino.setVisible(false);
+                home.setVisible(false);
                 bakeryTrue=true;
                 try {
                     background = ImageIO.read(new File("src/assets/BakeryEntrance.png"));
@@ -301,8 +367,28 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                     System.out.println(tired.getMessage());
                 }
             } else if(button==goToCasino) {
-
+                atCasino=true;
+                bakeryButton.setVisible(false);
+                home.setVisible(false);
+                atBeach.setVisible(false);
+                goToCasino.setVisible(false);
+                try {
+                    background = ImageIO.read(new File("src/assets/Casino/CasinoImage.png"));
+                } catch (IOException g) {
+                    g.getMessage();
+                }
             } else if(button==home) {
+                isOutside=false;
+                bakeryTrue=false;
+                bakeryButton.setVisible(false);
+                goToCasino.setVisible(false);
+                atBeach.setVisible(false);
+                home.setVisible(false);
+                try {
+                    background = ImageIO.read(new File("src/assets/Simeon.png"));
+                } catch (IOException h) {
+                    h.getMessage();
+                }
 
             }
 
