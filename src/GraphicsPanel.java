@@ -35,7 +35,10 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     private Player player;
     private boolean[] pressedKeys;
     private Rectangle internetButton;
+    private Rectangle callLamar;
+    private Rectangle callSimeon;
     private Rectangle purchases;
+    private Rectangle contactsButton;
     private boolean internet=false;
     private boolean phoneActive = false;
     private boolean isOutside = false;
@@ -46,16 +49,19 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     private boolean dealed=false;
     private boolean bet =false;
     private boolean draw=false;
+    private boolean contacts=false;
     private BufferedImage dialogueBox;
     private BufferedImage phoneImage;
     private BufferedImage internetPage;
+    private BufferedImage contactsPage;
     private BufferedImage farm;
     private int count=-1;
     private int chill;
-    private int cardTurn;
     int turn=1;
     int playerScore;
     int enemyScore;
+    private int cardTurnPlayer;
+    private int enemyTurnPlayerCard;
     int playerCards;
     int enemyCards;
     private ArrayList<Rectangle> menuItems;
@@ -70,6 +76,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             phoneImage = ImageIO.read(new File("src/assets/iFruit.png"));
             background = ImageIO.read(new File("src/assets/Simeon.png"));
             internetPage = ImageIO.read(new File("src/assets/IMG_1571.png"));
+            contactsPage = ImageIO.read(new File("src/Assets/ContactsPhone.png"));
         } catch (IOException g) {
             System.out.println(g.getMessage());
         }
@@ -149,6 +156,9 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         hit.setVisible(false);
         stand.setVisible(false);
         internetButton = new Rectangle(350, 250, 40, 40);
+        contactsButton = new Rectangle(350, 175, 40, 40);
+        callSimeon = new Rectangle(280, 100, 200, 40);
+        callLamar = new Rectangle(280, 140, 200, 40);
         purchases = new Rectangle(280, 100, 200, 40);
         menuItems = new ArrayList<>();
         int yC = 110;
@@ -225,6 +235,8 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                 } else {
                     g.drawImage(internetPage, 250, 0, this);
                 }
+            } else if(contacts) {
+                g.drawImage(contactsPage, 250, 0, null);
             } else {
                 g.drawImage(phoneImage, 250, 0, this);
             }
@@ -288,182 +300,37 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             }
         } else if(atCasino) {
             if(playingblackjack) {
-                if(playerScore>=21) {
-
-                } else if(enemyScore>=21) {
-
-                }
                 try {
-                    background = ImageIO.read(new File("src/Assets/Casino/BlackjackTable.png"));
-                } catch (IOException eft) {
-                    eft.getMessage();
+                    background = ImageIO.read(new File("src/assets/Casino/BlackjackTable.png"));
+                } catch (IOException a) {
+                    System.out.println(a.getMessage());
                 }
-                if(bet) {
-                    g.drawString("How much are you betting?", 220, 190);
-                    JTextField textField = new JTextField(20);
-                    textField.setVisible(false);
-                    add(textField);
-                    textField.setLocation(275, 250);
+                if(!dealed) {
+                    drawCards();
+                    dealed=true;
+                }
+                if(playerScore>=21) {
+                    g.drawString("YOU LOST! Pay up!", 260, 245);
+                } else if(enemyScore>=21) {
+                    g.drawString("YOU WON!", 280, 245);
                 } else {
-                    if (!dealed) {
-                        for (int i = 0; i < 4; i++) {
-                            int rand = (int) (Math.random() * 13) + 1;
-                            int rand2;
-                            if (i > 2) {
-                                // enemy
-                                if (i == 0) {
-                                    try {
-                                        if (rand == 13) {
-                                            rand = (int) (Math.random() * 8) + 1;
-                                            cardOneEnemy = ImageIO.read(new File("src/Assets/Casino/Cards/K" + rand + ".png"));
-                                        } else if (rand == 12) {
-                                            rand = (int) (Math.random() * 8) + 1;
-                                            cardOneEnemy = ImageIO.read(new File("src/Assets/Casino/Cards/Q" + rand + ".png"));
-                                        } else if (rand == 11) {
-                                            rand = (int) (Math.random() * 8) + 1;
-                                            cardOneEnemy = ImageIO.read(new File("src/Assets/Casino/Cards/J" + rand + ".png"));
-                                        } else if (rand == 1) {
-                                            rand = (int) (Math.random() * 8) + 1;
-                                            cardOneEnemy = ImageIO.read(new File("src/Assets/Casino/Cards/A" + "." + rand + ".png"));
-                                        } else {
-                                            rand2 = (int) (Math.random() * 8) + 1;
-                                            cardOneEnemy = ImageIO.read(new File("src/Assets/Casino/Cards/" + rand + "." + rand2 + ".png"));
-                                        }
-                                    } catch (IOException eftg) {
-                                        eftg.getMessage();
-                                    }
-                                } else {
-                                    try {
-                                        if (rand == 13) {
-                                            rand = (int) (Math.random() * 8) + 1;
-                                            cardTwoEnemy = ImageIO.read(new File("src/Assets/Casino/Cards/K" + rand + ".png"));
-                                        } else if (rand == 12) {
-                                            rand = (int) (Math.random() * 8) + 1;
-                                            cardTwoEnemy = ImageIO.read(new File("src/Assets/Casino/Cards/Q" + rand + ".png"));
-                                        } else if (rand == 11) {
-                                            rand = (int) (Math.random() * 8) + 1;
-                                            cardTwoEnemy = ImageIO.read(new File("src/Assets/Casino/Cards/J" + rand + ".png"));
-                                        } else if (rand == 1) {
-                                            rand = (int) (Math.random() * 8) + 1;
-                                            cardTwoEnemy = ImageIO.read(new File("src/Assets/Casino/Cards/A" + "." + rand + ".png"));
-                                        } else {
-                                            rand2 = (int) (Math.random() * 8) + 1;
-                                            cardTwoEnemy = ImageIO.read(new File("src/Assets/Casino/Cards/" + rand + "." + rand2 + ".png"));
-                                        }
-                                    } catch (IOException eftg) {
-                                        eftg.getMessage();
-                                    }
-                                }
-                                enemyScore = enemyScore + rand;
-                            } else {
-                                if (i == 2) {
-                                    try {
-                                        if (rand == 13) {
-                                            rand = (int) (Math.random() * 8) + 1;
-                                            cardOnePlayer = ImageIO.read(new File("src/Assets/Casino/Cards/K" + rand + ".png"));
-                                        } else if (rand == 12) {
-                                            rand = (int) (Math.random() * 8) + 1;
-                                            cardOnePlayer = ImageIO.read(new File("src/Assets/Casino/Cards/Q" + rand + ".png"));
-                                        } else if (rand == 11) {
-                                            rand = (int) (Math.random() * 8) + 1;
-                                            cardOnePlayer = ImageIO.read(new File("src/Assets/Casino/Cards/J" + rand + ".png"));
-                                        } else if (rand == 1) {
-                                            rand = (int) (Math.random() * 8) + 1;
-                                            cardOnePlayer = ImageIO.read(new File("src/Assets/Casino/Cards/A" + "." + rand + ".png"));
-                                        } else {
-                                            rand2 = (int) (Math.random() * 8) + 1;
-                                            cardOnePlayer = ImageIO.read(new File("src/Assets/Casino/Cards/" + rand + "." + rand2 + ".png"));
-                                        }
-                                    } catch (IOException eftg) {
-                                        eftg.getMessage();
-                                    }
-                                } else {
-                                    try {
-                                        if (rand == 13) {
-                                            rand = (int) (Math.random() * 8) + 1;
-                                            cardTwoPlayer = ImageIO.read(new File("src/Assets/Casino/Cards/K" + rand + ".png"));
-                                        } else if (rand == 12) {
-                                            rand = (int) (Math.random() * 8) + 1;
-                                            cardTwoPlayer = ImageIO.read(new File("src/Assets/Casino/Cards/Q" + rand + ".png"));
-                                        } else if (rand == 11) {
-                                            rand = (int) (Math.random() * 8) + 1;
-                                            cardTwoPlayer = ImageIO.read(new File("src/Assets/Casino/Cards/J" + rand + ".png"));
-                                        } else if (rand == 1) {
-                                            rand = (int) (Math.random() * 8) + 1;
-                                            cardTwoPlayer = ImageIO.read(new File("src/Assets/Casino/Cards/A" + "." + rand + ".png"));
-                                        } else {
-                                            rand2 = (int) (Math.random() * 8) + 1;
-                                            cardTwoPlayer = ImageIO.read(new File("src/Assets/Casino/Cards/" + rand + "." + rand2 + ".png"));
-                                        }
-                                    } catch (IOException eftg) {
-                                        eftg.getMessage();
-                                    }
-                                }
-                                playerScore = playerScore + rand;
-                            }
-                        }
-                    }
-                    dealed = true;
-                    g.setColor(Color.white);
-                    g.drawString("Dealer: " + enemyScore, 275, 240);
-                    g.drawString("You: " + playerScore, 275, 260);
-                    g.drawString("Hit or Stand?", 500, 250);
+                    g.drawImage(cardOneEnemy, 265, 100, null);
+                    g.drawImage(cardTwoEnemy, 345, 100, null);
+                    g.drawImage(cardOnePlayer, 265, 280, null);
+                    g.drawImage(cardTwoPlayer, 345, 280, null);
+                    g.drawString("Dealer: " + enemyScore, 280, 230);
+                    g.drawString("You: " + playerScore, 280, 260);
                     if(turn==1) {
+                        g.drawString("Hit or Stand?",480, 255);
                         hit.setVisible(true);
                         stand.setVisible(true);
-                        hit.setLocation(500, 280);
-                        stand.setLocation(550, 280);
-                    } else if(turn==2){
-                        if(enemyScore<=19) {
-                            turn=3;
-                        }
-                    } else if(turn==-1); {
-                        int rand = (int) (Math.random() * 13) + 1;
-                        int rand2;
-                        if(cardTurn==-1) {
-                            try {
-                                if (rand == 13) {
-                                    rand = (int) (Math.random() * 8) + 1;
-                                    cardOnePlayer = ImageIO.read(new File("src/Assets/Casino/Cards/K" + rand + ".png"));
-                                } else if (rand == 12) {
-                                    rand = (int) (Math.random() * 8) + 1;
-                                    cardOnePlayer = ImageIO.read(new File("src/Assets/Casino/Cards/Q" + rand + ".png"));
-                                } else if (rand == 11) {
-                                    rand = (int) (Math.random() * 8) + 1;
-                                    cardOnePlayer = ImageIO.read(new File("src/Assets/Casino/Cards/J" + rand + ".png"));
-                                } else if (rand == 1) {
-                                    rand = (int) (Math.random() * 8) + 1;
-                                    cardOnePlayer = ImageIO.read(new File("src/Assets/Casino/Cards/A" + "." + rand + ".png"));
-                                } else {
-                                    rand2 = (int) (Math.random() * 8) + 1;
-                                    cardOnePlayer = ImageIO.read(new File("src/Assets/Casino/Cards/" + rand + "." + rand2 + ".png"));
-                                }
-                            } catch (IOException eftg) {
-                                eftg.getMessage();
-                            }
-                            playerScore=playerScore+rand;
+                        hit.setLocation(490, 275);
+                        stand.setLocation(540, 275);
+                    } else {
+                        if(enemyScore>=18) {
+                            turn=1;
                         } else {
-                            try {
-                                if (rand == 13) {
-                                    rand = (int) (Math.random() * 8) + 1;
-                                    cardTwoPlayer = ImageIO.read(new File("src/Assets/Casino/Cards/K" + rand + ".png"));
-                                } else if (rand == 12) {
-                                    rand = (int) (Math.random() * 8) + 1;
-                                    cardTwoPlayer = ImageIO.read(new File("src/Assets/Casino/Cards/Q" + rand + ".png"));
-                                } else if (rand == 11) {
-                                    rand = (int) (Math.random() * 8) + 1;
-                                    cardTwoPlayer = ImageIO.read(new File("src/Assets/Casino/Cards/J" + rand + ".png"));
-                                } else if (rand == 1) {
-                                    rand = (int) (Math.random() * 8) + 1;
-                                    cardTwoPlayer = ImageIO.read(new File("src/Assets/Casino/Cards/A" + "." + rand + ".png"));
-                                } else {
-                                    rand2 = (int) (Math.random() * 8) + 1;
-                                    cardTwoPlayer = ImageIO.read(new File("src/Assets/Casino/Cards/" + rand + "." + rand2 + ".png"));
-                                }
-                            } catch (IOException eftg) {
-                                eftg.getMessage();
-                            }
-                            playerScore=playerScore+rand;
+
                         }
                     }
                 }
@@ -530,8 +397,47 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             System.out.println(e.getMessage());
         }
     }
-    public void draw() {
+    public void drawCards(int n) {
+        if(!dealed) {
+            for (int i = 0; i < 4; i++) {
+                ;
+                int rand1 = (int) (Math.random() * 13) + 1;
+                int rand3 = (int) (Math.random() * 8) + 1;
+                String card = "src/assets/Casino/Cards/";
+                if (rand1 == 13) {
+                    card = card + "K" + rand3;
+                } else if (rand1 == 12) {
+                    card = card + "Q" + rand3;
+                } else if (rand1 == 11) {
+                    card = card + "J" + rand3;
+                } else if (rand1 == 1) {
+                    card = card + "A." + rand3;
+                } else {
+                    card = card + rand1 + "." + rand3;
+                }
+                try {
+                    if (i == 1) {
+                        cardOneEnemy = ImageIO.read(new File(card + ".png"));
+                        enemyScore = enemyScore + rand1;
+                    } else if (i == 2) {
+                        cardTwoEnemy = ImageIO.read(new File(card + ".png"));
+                        enemyScore = enemyScore + rand1;
+                    } else if (i == 3) {
+                        cardOnePlayer = ImageIO.read(new File(card + ".png"));
+                        playerScore = playerScore + rand1;
+                    } else {
+                        cardTwoPlayer = ImageIO.read(new File(card + ".png"));
+                        playerScore = playerScore + rand1;
+                    }
+                } catch (IOException fe) {
+                    System.out.println(fe.getMessage());
+                }
+            }
+        } else {
+            if(cardTurn==1) {
 
+            }
+        }
     }
     public void setFileNames() {
         fileNames.add("0_apple_pie_dish");
@@ -639,6 +545,16 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     public void mousePressed(MouseEvent e) { }
     public void mouseReleased(MouseEvent e) {
         if (phoneActive) {
+            if(contacts) {
+                if(callSimeon.contains(e.getPoint())) {
+                    System.out.println("calling simeon");
+                } else if(callLamar.contains(e.getPoint())) {
+                    System.out.println("calling lamar");
+                }
+            }
+            if(contactsButton.contains(e.getPoint())) {
+                contacts=true;
+            }
             if (internetButton.contains(e.getPoint())) {
                 internet=true;
             }
@@ -691,6 +607,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                     phoneActive=false;
                     internet=false;
                     buying=false;
+                    contacts=false;
                     buy.setVisible(false);
                     back.setVisible(false);
                     count=-1;
@@ -761,7 +678,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                 blackjack.setVisible(false);
                 slots.setVisible(false);
             } else if(button==hit) {
-                turn=-1;
+                drawCards();
             } else if(button==stand) {
                 turn=2;
             }
