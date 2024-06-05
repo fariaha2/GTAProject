@@ -1,6 +1,10 @@
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-public class Properties {
+import java.io.File;
+import java.io.IOException;
+
+public class Property {
     private BufferedImage image;
     private String description;
     private String type;
@@ -11,17 +15,23 @@ public class Properties {
     private int totalMoneyGenerated=0;
     private int rate;
     private boolean purchased;
-    public Properties (BufferedImage img, int p, int r, int x, int y, String l, String d, String t, boolean purchase){
+    public Property(int price, int rate, int x, int y, String locatin, String img, String desc, String typ){
+        try {
+            image = ImageIO.read(new File("src/Assets/Properties/" + img + ".png"));
+        } catch (IOException e) {
+            e.getMessage();
+        }
         xCoord=x;
         yCoord=y;
-        price=p;
-        image=img;
-        rate=r;
-        description=d;
-        type=d;
-        location=l;
-        purchased=purchase;
+        this.price=price;
+        this.rate=rate;
+        description=desc;
+        type=typ;
+        location=locatin;
+        purchased=false;
     }
+    public void setPurchased() { purchased=true; }
+    public BufferedImage getImage() { return image; }
     public boolean isPurchased() {
         return purchased;
     }
@@ -38,7 +48,7 @@ public class Properties {
     public int getPrice() {
         return price;
     }
-    public int rate() {
+    public int getRate() {
         return rate;
     }
     public void addProfit() {

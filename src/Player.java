@@ -59,7 +59,10 @@ public class Player {
     public String getTier() {
         return Integer.toString(tier);
     }
-    public String getMoney() {
-        return Integer.toString(money);
+    public void reduceMoney(int m) {
+        money=money-m;
+    }
+    public int getMoney() {
+        return money;
     }
 }
