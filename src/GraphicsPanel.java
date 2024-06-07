@@ -11,6 +11,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
 public class GraphicsPanel extends JPanel implements KeyListener, MouseListener, ActionListener {
+    private JTextField textField;
     private JButton phone;
     private JButton bakeryButton;
     private JButton atBeach;
@@ -24,6 +25,8 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     private JButton buy;
     private JButton hit;
     private JButton stand;
+    private JButton pay;
+    private JButton submit;
     private BufferedImage background;
     private BufferedImage food;
     private BufferedImage img1;
@@ -60,8 +63,9 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     int turn=1;
     int playerScore;
     int enemyScore;
-    private int cardTurnPlayer;
-    private int enemyTurnPlayerCard;
+    private int betAmount;
+    private int cardTurnPlayer=11;
+    private int enemyTurnCard=21;
     int playerCards;
     int enemyCards;
     private ArrayList<Rectangle> menuItems;
@@ -80,6 +84,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         } catch (IOException g) {
             System.out.println(g.getMessage());
         }
+        textField = new JTextField(20);
         fileNames = new ArrayList<>();
         properties = new ArrayList<>();
         propertyRects = new ArrayList<>();
@@ -103,12 +108,16 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         blackjack = new JButton("Play Blackjack");
         hit = new JButton("Hit");
         stand = new JButton("Stand");
+        pay = new JButton("Pay");
+        submit = new JButton("Submit");
         buy = new JButton("Buy");
         back = new JButton("Go Back");
         slots.setFocusable(false);
         blackjack.setFocusable(false);
         hit.setFocusable(false);
         stand.setFocusable(false);
+        pay.setFocusable(false);
+        submit.setFocusable(false);
         buy.setFocusable(false);
         back.setFocusable(false);
         home.setFocusable(false);
@@ -118,7 +127,10 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         bakeryButton.setFocusable(false);
         goToCasino.setFocusable(false);
         phone.setFocusable(false);
+        add(textField);
         add(phone);
+        add(pay);
+        add(submit);
         add(outside);
         add(bakeryButton);
         add(goToCasino);
@@ -155,6 +167,9 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         buy.setVisible(false);
         hit.setVisible(false);
         stand.setVisible(false);
+        pay.setVisible(false);
+        submit.setVisible(false);
+        textField.setVisible(false);
         internetButton = new Rectangle(350, 250, 40, 40);
         contactsButton = new Rectangle(350, 175, 40, 40);
         callSimeon = new Rectangle(280, 100, 200, 40);
@@ -191,6 +206,8 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             if(internet) {
                 if(buying) {
                     if(count==-1) {
+                        phone.setLocation(485, 30);
+                        back.setVisible(false);
                         try {
                             background = ImageIO.read(new File("src/assets/USMAP.png"));
                         } catch (IOException f) {
@@ -229,8 +246,11 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
 
                     } else if(count==-3){
                         g.setFont(new Font("Arial", Font.BOLD, 25));
-                        g.drawString("CONGRATS!", 200, 250);
-                        g.drawString("You just bought some property!", 50, 300);
+                        g.drawString("CONGRATS!", 275, 200);
+                        g.drawString("You just bought some property!", 170, 225);
+                        buy.setVisible(false);
+                        back.setLocation(550, 400);
+                        phone.setLocation(485, 30);
                     }
                 } else {
                     g.drawImage(internetPage, 250, 0, this);
@@ -272,8 +292,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                 g.drawString("Click to order", 480, 450);
 
             } else {
-                if(chill==3) {
-                    count=-1;
+                if(chill==4) {
                     g.drawImage(player.getSprite(), 350, 250, null);
                     try {
                         background = ImageIO.read(new File("src/assets/Simeon.png"));
@@ -305,32 +324,43 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                 } catch (IOException a) {
                     System.out.println(a.getMessage());
                 }
-                if(!dealed) {
-                    drawCards();
-                    dealed=true;
-                }
-                if(playerScore>=21) {
-                    g.drawString("YOU LOST! Pay up!", 260, 245);
-                } else if(enemyScore>=21) {
-                    g.drawString("YOU WON!", 280, 245);
+                if(!bet) {
+                    g.drawString("How much are you betting?", 300, 250);
+                    textField.setLocation(320, 350);
+                    submit.setLocation(340, 370);
                 } else {
-                    g.drawImage(cardOneEnemy, 265, 100, null);
-                    g.drawImage(cardTwoEnemy, 345, 100, null);
-                    g.drawImage(cardOnePlayer, 265, 280, null);
-                    g.drawImage(cardTwoPlayer, 345, 280, null);
-                    g.drawString("Dealer: " + enemyScore, 280, 230);
-                    g.drawString("You: " + playerScore, 280, 260);
-                    if(turn==1) {
-                        g.drawString("Hit or Stand?",480, 255);
-                        hit.setVisible(true);
-                        stand.setVisible(true);
-                        hit.setLocation(490, 275);
-                        stand.setLocation(540, 275);
+                    if(!dealed) {
+                        drawCards(0);
+                        dealed=true;
+                    }
+                    if(playerScore>=21) {
+                        g.drawString("YOU LOST! Pay up!", 260, 245);
+                        pay.setLocation(280, 300);
+                    } else if(enemyScore>=21) {
+                        g.drawString("YOU WON!", 280, 245);
+                        player.changeMoney(betAmount*-1);
+                        playingblackjack=false;
+                        dealed=false;
+                        bet=false;
                     } else {
-                        if(enemyScore>=18) {
-                            turn=1;
+                        g.drawImage(cardOneEnemy, 265, 100, null);
+                        g.drawImage(cardTwoEnemy, 345, 100, null);
+                        g.drawImage(cardOnePlayer, 265, 280, null);
+                        g.drawImage(cardTwoPlayer, 345, 280, null);
+                        g.drawString("Dealer: " + enemyScore, 280, 230);
+                        g.drawString("You: " + playerScore, 280, 260);
+                        if(turn==1) {
+                            g.drawString("Hit or Stand?",480, 255);
+                            hit.setVisible(true);
+                            stand.setVisible(true);
+                            hit.setLocation(490, 275);
+                            stand.setLocation(540, 275);
                         } else {
+                            if(enemyScore>=18) {
+                                turn=1;
+                            } else {
 
+                            }
                         }
                     }
                 }
@@ -380,6 +410,9 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             if (pressedKeys[83]) {
                 player.moveDown();
             }
+            if(!bakeryTrue) {
+                count=-1;
+            }
             if (player.getxCoord() <= 375 && player.getxCoord() >= 300 && player.getyCoord() >= 400 && player.getyCoord() <= 450) {
                 outside.setVisible(true);
                 g.setFont(new Font("Arial", Font.BOLD, 30));
@@ -400,7 +433,6 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     public void drawCards(int n) {
         if(!dealed) {
             for (int i = 0; i < 4; i++) {
-                ;
                 int rand1 = (int) (Math.random() * 13) + 1;
                 int rand3 = (int) (Math.random() * 8) + 1;
                 String card = "src/assets/Casino/Cards/";
@@ -434,8 +466,40 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                 }
             }
         } else {
-            if(cardTurn==1) {
-
+            int rand1 = (int) (Math.random() * 13) + 1;
+            int rand3 = (int) (Math.random() * 8) + 1;
+            String card = "src/assets/Casino/Cards/";
+            if (rand1 == 13) {
+                card = card + "K" + rand3;
+            } else if (rand1 == 12) {
+                card = card + "Q" + rand3;
+            } else if (rand1 == 11) {
+                card = card + "J" + rand3;
+            } else if (rand1 == 1) {
+                card = card + "A." + rand3;
+            } else {
+                card = card + rand1 + "." + rand3;
+            }
+            try {
+                if(n==11) {
+                    cardOnePlayer = ImageIO.read(new File(card + ".png"));
+                    cardTurnPlayer=12;
+                    playerScore=playerScore+rand1;
+                } else if(n==12) {
+                    cardTwoPlayer = ImageIO.read(new File(card + ".png"));
+                    cardTurnPlayer=11;
+                    playerScore=playerScore+rand1;
+                } else if(n==21) {
+                    cardOneEnemy = ImageIO.read(new File(card + ".png"));
+                    cardTurnPlayer=22;
+                    enemyScore=enemyScore+rand1;
+                } else {
+                    cardTurnPlayer=21;
+                    enemyScore=enemyScore+rand1;
+                    cardTwoEnemy = ImageIO.read(new File(card + ".png"));
+                }
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
             }
         }
     }
@@ -669,7 +733,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                 }
             } else if(button==buy) {
                 if(player.getMoney()>=properties.get(count).getPrice()) {
-                    player.reduceMoney(properties.get(count).getPrice());
+                    player.changeMoney(-1*properties.get(count).getPrice());
                     properties.get(count).setPurchased();
                     count = -3;
                 }
@@ -678,9 +742,17 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                 blackjack.setVisible(false);
                 slots.setVisible(false);
             } else if(button==hit) {
-                drawCards();
+                drawCards(cardTurnPlayer);
             } else if(button==stand) {
                 turn=2;
+            } else if(button==pay) {
+                player.changeMoney(-1*betAmount);
+                playingblackjack=false;
+                dealed=false;
+                bet=false;
+            } else if(button==submit) {
+                betAmount = Integer.parseInt(textField.getText());
+                bet=true;
             }
 
         }
