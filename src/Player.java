@@ -59,7 +59,7 @@ public class Player {
     public String getTier() {
         return Integer.toString(tier);
     }
-    public void changeMoney(int m) {
+    public void changeBalance(int m) {
         money=money+m;
     }
     public int getMoney() {

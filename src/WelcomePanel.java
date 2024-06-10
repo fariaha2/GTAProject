@@ -68,13 +68,6 @@ public class WelcomePanel extends JPanel implements ActionListener {
             backButton.setVisible(false);
         }
     }
-    public void tutorialGraphics(Graphics g) {
-        super.paintComponent(g);
-        submitButton.setVisible(false);
-        clearButton.setVisible(false);
-        tutorialButton.setVisible(false);
-        textField.setVisible(false);
-    }
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() instanceof JButton) {
