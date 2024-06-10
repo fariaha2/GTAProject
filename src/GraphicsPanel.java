@@ -48,6 +48,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     private Rectangle tierTwo;
     private Rectangle tierThree;
     private Rectangle homeRect;
+    private Rectangle leverRect;
     private Rectangle windowRect;
     private boolean internet=false;
     private boolean phoneActive = false;
@@ -65,6 +66,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     private boolean tier2;
     private boolean tier3;
     private boolean playingSlots;
+    private boolean animationSlots;
     private BufferedImage dialogueBox;
     private BufferedImage phoneImage;
     private BufferedImage internetPage;
@@ -207,6 +209,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         tierTwo = new Rectangle(135, 150, 100, 50);
         tierThree = new Rectangle(435, 155, 100, 50);
         homeRect = new Rectangle(10, 10, 400, 445);
+        leverRect = new Rectangle(480, 150, 30, 180);
         menuItems = new ArrayList<>();
         bet=false;
         int yC = 110;
@@ -251,6 +254,22 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             phone.setVisible(true);
             outside.setVisible(false);
             outside.setLocation(125, 275);
+            if(tier==1) {
+                windowRect = new Rectangle(60, 22, 145, 140);
+            } else if(tier==2) {
+
+            } else {
+
+            }
+            if(player.playerRect().intersects(windowRect)) {
+                if(tier==1) {
+
+                } else if(tier==2) {
+
+                } else if(tier==3) {
+
+                }
+            }
             if (pressedKeys[65]) {
                 player.moveLeft();
             }
@@ -490,13 +509,29 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                 }
                 g.setColor(Color.white);
                 if(!bet) {
-                    g.drawString("How much are you betting?", 300, 150);
-                    textField.setLocation(320, 175);
+                    g.drawString("How much are you betting?", 190, 150);
+                    textField.setLocation(230, 165);
                     textField.setVisible(true);
-                    submit.setLocation(340, 195);
+                    submit.setLocation(290, 190);
                     submit.setVisible(true);
+                } else if(animationSlots) {
+                    try {
+                        background = ImageIO.read(new File("src/assets/Casino/BlackBackground.png"));
+                    } catch (IOException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    SlotMachine machine;
+                    int win = (int) (Math.random()*100)+1;
+                    if(win>=0 && win<=24) {
+                        machine = new SlotMachine(true);
+                    } else {
+                        machine = new SlotMachine(false);
+                    }
+                    g.drawImage(machine.getSlotImage(), 25, 10, null);
                 } else {
-                    g.drawString("Hit the lever to start playing!", 50, 10);
+                    submit.setVisible(false);
+                    textField.setVisible(false);
+                    g.drawString("Click the lever to play", 350, 150);
                 }
             } else {
                 g.setFont(new Font("Arial", Font.BOLD, 30));
@@ -753,6 +788,15 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                     tier2=true;
                 } else if(tierThree.contains(e.getPoint())) {
                     tier3=true;
+                }
+            }
+        }
+        if(atCasino) {
+            if(playingSlots) {
+                if(bet) {
+                    if(leverRect.contains(e.getPoint())) {
+                        animationSlots=true;
+                    }
                 }
             }
         }

@@ -28,6 +28,7 @@ public class Animation implements ActionListener {
         return frames.get(currentFrame);
     }
 
+
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() instanceof Timer) {
             //This advances the animation to the next frame

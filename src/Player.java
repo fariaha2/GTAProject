@@ -1,10 +1,11 @@
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 public class Player {
-    private final double MOVE_AMT = 0.5;
+    private final double MOVE_AMT = 3;
     private double xCoord;
     private double yCoord;
     private int tier;
@@ -64,5 +65,11 @@ public class Player {
     }
     public int getMoney() {
         return money;
+    }
+    public Rectangle playerRect() {
+        int imageHeight = sprite.getHeight();
+        int imageWidth = sprite.getWidth();
+        Rectangle rect = new Rectangle((int) xCoord, (int) yCoord, imageWidth, imageHeight);
+        return rect;
     }
 }
