@@ -3,11 +3,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import javax.imageio.ImageIO;
 public class Player {
-    private final double MOVE_AMT = 3;
+    private final double MOVE_AMT = 1.25;
     private double xCoord;
     private double yCoord;
+    private double missionx;
+    private double missiony;
+
     private int tier;
     private int money;
     private BufferedImage sprite;
@@ -21,30 +23,42 @@ public class Player {
         money=50000;
         xCoord=350;
         yCoord=250;
+        missionx=50;
+        missiony=250;
     }
 
     public void moveRight() {
         if (xCoord + MOVE_AMT <= 700) {
+            missionx += MOVE_AMT;
             xCoord += MOVE_AMT;
         }
     }
 
     public void moveLeft() {
         if (xCoord - MOVE_AMT >= 0) {
+            missionx -= MOVE_AMT;
             xCoord -= MOVE_AMT;
         }
     }
 
     public void moveUp() {
         if (yCoord - MOVE_AMT >= 0) {
+            missiony -= MOVE_AMT;
             yCoord -= MOVE_AMT;
         }
     }
 
     public void moveDown() {
         if (yCoord + MOVE_AMT <= 500) {
+            missiony += MOVE_AMT;
             yCoord += MOVE_AMT;
         }
+    }
+    public int getMissionx() {
+        return (int) missionx;
+    }
+    public int getMissiony() {
+        return (int) missiony;
     }
 
     public int getxCoord() {

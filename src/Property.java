@@ -17,7 +17,7 @@ public class Property {
     private boolean purchased;
     public Property(int price, int rate, int x, int y, String locatin, String img, String desc, String typ){
         try {
-            image = ImageIO.read(new File("src/Assets/Properties/" + img + ".png"));
+            image = ImageIO.read(new File("src/Assets/PropertiesHomes/" + img + ".png"));
         } catch (IOException e) {
             e.getMessage();
         }

@@ -11,6 +11,12 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
 public class GraphicsPanel extends JPanel implements KeyListener, MouseListener, ActionListener {
+    private Cop one;
+    private Cop two;
+    private Cop three;
+    private static String newLine = "\n";
+    private JTextArea textArea;
+    private JScrollPane scrollPane = new JScrollPane(textArea);
     private Timer timer;
     private JTextField textField;
     private JButton phone;
@@ -30,6 +36,9 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     private JButton submit;
     private JButton propertyButton;
     private JButton homeButton;
+    private JButton window;
+    private JButton accept;
+    private JButton deny;
     private BufferedImage background;
     private BufferedImage food;
     private BufferedImage homeImage;
@@ -37,6 +46,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     private BufferedImage cardTwoEnemy;
     private BufferedImage cardOnePlayer;
     private BufferedImage cardTwoPlayer;
+    private BufferedImage textBox;
     private String name;
     private Player player;
     private boolean[] pressedKeys;
@@ -50,6 +60,10 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     private Rectangle homeRect;
     private Rectangle leverRect;
     private Rectangle windowRect;
+    private Rectangle onee;
+    private Rectangle twoo;
+    private boolean missionone=false;
+    private boolean missiontwo=false;
     private boolean internet=false;
     private boolean phoneActive = false;
     private boolean isOutside = false;
@@ -62,6 +76,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     private boolean draw=false;
     private boolean contacts=false;
     private boolean house;
+    private boolean lookingWindow;
     private boolean property;
     private boolean tier2;
     private boolean tier3;
@@ -73,6 +88,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     private BufferedImage contactsPage;
     private BufferedImage farm;
     private int count=-1;
+    private int missionCount=0;
     private int chill;
     private int turn=1;
     private int playerScore;
@@ -82,6 +98,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     private int enemyTurnCard=21;
     private int playerCards;
     private int enemyCards;
+    private int room;
     private int tier=1;
     private int time;
     private ArrayList<Rectangle> menuItems;
@@ -97,12 +114,18 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             background = ImageIO.read(new File("src/assets/PropertiesHomes/TierOneHouse.png"));
             internetPage = ImageIO.read(new File("src/assets/IMG_1571.png"));
             contactsPage = ImageIO.read(new File("src/Assets/ContactsPhone.png"));
+            textBox = ImageIO.read(new File("src/Assets/TextBox.png"));
         } catch (IOException g) {
             System.out.println(g.getMessage());
         }
+        textArea = new JTextArea(5, 20);
+
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setVisible(false);
         betAmount=-1;
         time = 0;
-        timer = new Timer(500, this); // this Timer will call the actionPerformed interface method every 500ms = 0.5 second
+        timer = new Timer(1000, this); // this Timer will call the actionPerformed interface method every 500ms = 0.5 second
         timer.start();
         textField = new JTextField(20);
         fileNames = new ArrayList<>();
@@ -134,6 +157,9 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         submit = new JButton("Submit");
         buy = new JButton("Buy");
         back = new JButton("Go Back");
+        window = new JButton("Look out Window");
+        accept = new JButton("Yes");
+        deny = new JButton("No");
         slots.setFocusable(false);
         blackjack.setFocusable(false);
         hit.setFocusable(false);
@@ -142,6 +168,9 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         submit.setFocusable(false);
         buy.setFocusable(false);
         back.setFocusable(false);
+        window.setFocusable(false);
+        accept.setFocusable(false);
+        deny.setFocusable(false);
         home.setFocusable(false);
         atBeach.setFocusable(false);
         menu.setFocusable(false);
@@ -168,6 +197,9 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         add(hit);
         add(stand);
         add(back);
+        add(window);
+        add(accept);
+        add(deny);
         add(buy);
         submit.addActionListener(this);
         hit.addActionListener(this);
@@ -185,6 +217,11 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         blackjack.addActionListener(this);
         back.addActionListener(this);
         buy.addActionListener(this);
+        window.addActionListener(this);
+        accept.addActionListener(this);
+        deny.addActionListener(this);
+        pay.addActionListener(this);
+        window.setVisible(false);
         menu.setVisible(false);
         atBeach.setVisible(false);
         bakeryButton.setVisible(false);
@@ -201,6 +238,8 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         textField.setVisible(false);
         propertyButton.setVisible(false);
         homeButton.setVisible(false);
+        accept.setVisible(false);
+        deny.setVisible(false);
         internetButton = new Rectangle(350, 250, 40, 40);
         contactsButton = new Rectangle(350, 175, 40, 40);
         callSimeon = new Rectangle(280, 100, 200, 40);
@@ -210,6 +249,9 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
         tierThree = new Rectangle(435, 155, 100, 50);
         homeRect = new Rectangle(10, 10, 400, 445);
         leverRect = new Rectangle(480, 150, 30, 180);
+        one = new Cop(190, 50, "UD", "b", 1);
+        two = new Cop(190, 350, "UD", "forward",2);
+        three = new Cop(350, 200, "RL", "foward", 2);
         menuItems = new ArrayList<>();
         bet=false;
         int yC = 110;
@@ -232,7 +274,14 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(background, 0, 0, null);
+        accept.setVisible(false);
+        deny.setVisible(false);
+        blackjack.setVisible(false);
+        slots.setVisible(false);
+        home.setVisible(false);
+        if(phoneActive || bakeryTrue || atCasino || isOutside) {
+            g.drawImage(background, 0, 0, null);
+        }
         g.setFont(new Font("Arial", Font.BOLD, 25));
         g.setColor(Color.BLACK);
         g.drawString("$" + player.getMoney(), 485, 23);
@@ -248,27 +297,44 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             } catch (IOException jk) {
                 jk.getMessage();
             }
-            g.drawImage(background, 0, 0, null);
-            g.drawImage(player.getSprite(), player.getxCoord(), player.getyCoord(), null);
             phone.setLocation(485, 30);
             phone.setVisible(true);
             outside.setVisible(false);
             outside.setLocation(125, 275);
             if(tier==1) {
+                g.drawImage(background, 0, 0, null);
                 windowRect = new Rectangle(60, 22, 145, 140);
             } else if(tier==2) {
-
+                g.drawImage(background, 50, 0, null);
+                windowRect = new Rectangle(260, 22, 125, 120);
             } else {
-
+                windowRect = new Rectangle(60, 22, 145, 140);
             }
-            if(player.playerRect().intersects(windowRect)) {
+            g.drawImage(player.getSprite(), player.getxCoord(), player.getyCoord(), null);
+            if(lookingWindow) {
                 if(tier==1) {
-
+                    g.drawImage(textBox, 250, 150, null);
+                    g.setFont(new Font("Arial", Font.BOLD, 12));
+                    g.drawString("The window is boarded up.", 270, 235);
                 } else if(tier==2) {
-
-                } else if(tier==3) {
+                    try {
+                        background = ImageIO.read(new File("src/assets/TierTwoBG.png"));
+                    } catch (IOException ez) {
+                        ez.getMessage();
+                    }
+                    g.drawImage(background, 0, 10, null);
+                    back.setVisible(true);
+                    back.setLocation(600, 400);
+                } else {
 
                 }
+            }
+            if(player.playerRect().intersects(windowRect)) {
+                window.setVisible(true);
+                window.setLocation(100, 22);
+            } else {
+                lookingWindow=false;
+                window.setVisible(false);
             }
             if (pressedKeys[65]) {
                 player.moveLeft();
@@ -306,6 +372,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                     if(count==-1) {
                         phone.setLocation(485, 30);
                         back.setVisible(false);
+                        buy.setVisible(false);
                         try {
                             background = ImageIO.read(new File("src/assets/USMAP.png"));
                         } catch (IOException f) {
@@ -327,10 +394,11 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                     } else if(count>=0){
                         phone.setLocation(485, 30);
                         try {
-                            background = ImageIO.read(new File("src/assets/Properties/WhiteBackground.png"));
+                            background = ImageIO.read(new File("src/assets/PropertiesHomes/WhiteBackground.png"));
                         } catch (IOException f) {
                             f.getMessage();
                         }
+                        g.drawImage(background, 0, 0, null);
                         g.drawImage(properties.get(count).getImage(), 10, 10, null);
                         g.drawString("Price: $" + properties.get(count).getPrice(), 10,240);
                         g.drawString("Money per minute: $" + properties.get(count).getRate(), 10, 280);
@@ -341,7 +409,6 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                         buy.setVisible(true);
                         back.setLocation(550, 400);
                         buy.setLocation(450, 400);
-
                     } else if(count==-3){
                         g.setFont(new Font("Arial", Font.BOLD, 25));
                         g.drawString("CONGRATS!", 275, 200);
@@ -382,9 +449,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                         g.drawImage(homeImage, 10, 10, null);
 
                         g.drawString("Cost: $100,000", 450, 70);
-                        g.drawString("Click image to see", 450, 110);
-                        g.drawString("second floor", 450, 150);
-                        g.drawString("Want to buy it?", 450, 190);
+                        g.drawString("Want to buy it?", 450, 110);
                     } else {
                         g.drawString("Click on the tier you would like to see", 125, 100);
                         g.drawString("You are currently tier " + tier, 175, 125);
@@ -395,7 +460,84 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                     g.drawImage(internetPage, 250, 0, this);
                 }
             } else if(contacts) {
-                g.drawImage(contactsPage, 250, 0, null);
+                if(missionone) {
+                    //simeon mission
+                    if(missionCount-1==0 || missionCount-1==1 || missionCount-1==2) {
+                        try {
+                            background = ImageIO.read(new File("src/assets/Casino/BlackBackground.png"));
+                        } catch (IOException e) {
+                            e.getMessage();
+                        }
+                        g.drawImage(background, 0, 0, null);
+                        g.setColor(Color.WHITE);
+                        g.drawImage(dialogueBox, 165, 230, this);
+                        g.setFont(new Font("Arial", Font.ITALIC, 25));
+                        g.drawString("Click to continue", 480, 450);
+                        g.setFont(new Font("ARIAL", Font.BOLD, 25));
+                        g.setColor(Color.black);
+                    }
+                    if(missionCount-1==0) {
+                        g.drawString("Simeon wants you to", 200, 300);
+                        g.drawString("steal a car.", 200, 320);
+                    } else if(missionCount-1==1){
+                        g.drawString("The car will be at", 200, 300);
+                        g.drawString("the alley.", 200, 320);
+                    } else if(missionCount-1==2) {
+                        g.drawString("Avoid the cops!", 200, 300);
+                    } else {
+                        room=1;
+                        if(room==1) {
+                            try {
+                                background = ImageIO.read(new File("src/assets/Missions/MissionOne.png"));
+                            } catch (IOException e) {
+                                e.getMessage();
+                            }
+                            g.drawImage(background, 0, 0, null);
+                            g.drawImage(player.getSprite(), player.getMissionx(), player.getMissiony(), null);
+                            g.setColor(Color.white);
+                            if(time==5) {
+                                one.callMove();
+                                two.callMove();
+                                three.callMove();
+                                time=0;
+                            }
+                            g.drawImage(one.getSprite(), one.getxCoord(), one.getyCoord(), null);
+                            g.drawImage(two.getSprite(), two.getxCoord(), two.getyCoord(), null);
+                            g.drawImage(three.getSprite(), three.getxCoord(), three.getyCoord(), null);
+                            g.drawRect(one.getxCoord()-10, one.getyCoord(), 100, 100);
+                            g.drawRect(two.getxCoord()-10, two.getyCoord(), 100, 100);
+                        }
+                        if (pressedKeys[65]) {
+                            player.moveLeft();
+                        }
+                        if (pressedKeys[68]) {
+                            player.moveRight();
+                        }
+                        if (pressedKeys[87]) {
+                            player.moveUp();
+                        }
+                        if (pressedKeys[83]) {
+                            player.moveDown();
+                        }
+                        if(player.playerRect().intersects(one.CopRect()) || player.playerRect().intersects(two.CopRect())) {
+                            room=-1;
+                            try {
+                                background = ImageIO.read(new File("src/assets/Casino/BlackBackground.png"));
+                            } catch (IOException e) {
+                                e.getMessage();
+                            }
+                            g.drawString("GAME OVER", 350, 250);
+                            home.setVisible(true);
+                            home.setLocation(375, 275);
+                        }
+                    }
+
+                } else if(missiontwo) {
+                    //lamar mission
+
+                } else {
+                    g.drawImage(contactsPage, 250, 0, null);
+                }
             } else {
                 g.drawImage(phoneImage, 250, 0, this);
             }
@@ -452,12 +594,15 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             }
         } else if(atCasino) {
             if(playingblackjack) {
+                home.setVisible(false);
                 try {
                     background = ImageIO.read(new File("src/assets/Casino/BlackjackTable.png"));
                 } catch (IOException a) {
                     System.out.println(a.getMessage());
                 }
                 if(betAmount==-1) {
+                    accept.setVisible(false);
+                    deny.setVisible(false);
                     g.drawString("How much are you betting?", 200, 200);
                     textField.setLocation(250, 225);
                     textField.setVisible(true);
@@ -472,13 +617,19 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                     }
                     if(playerScore>21) {
                         g.drawString("YOU LOST! Pay up!", 260, 245);
+                        hit.setVisible(false);
+                        stand.setVisible(false);
+                        pay.setVisible(true);
                         pay.setLocation(280, 300);
                     } else if(enemyScore>21) {
-                        g.drawString("YOU WON!", 280, 245);
-                        player.changeBalance(betAmount*-1);
-                        playingblackjack=false;
-                        dealed=false;
-                        bet=false;
+                        hit.setVisible(false);
+                        stand.setVisible(false);
+                        g.drawString("YOU WON!", 250, 245);
+                        g.drawString("Want to play again?", 230, 275);
+                        accept.setVisible(true);
+                        deny.setVisible(true);
+                        accept.setLocation(325, 295);
+                        deny.setLocation(395, 295);
                     } else {
                         g.drawImage(cardOneEnemy, 265, 100, null);
                         g.drawImage(cardTwoEnemy, 345, 100, null);
@@ -540,6 +691,11 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                 blackjack.setVisible(true);
                 slots.setLocation(135, 175);
                 blackjack.setLocation(435, 175);
+                home.setVisible(true);
+                home.setLocation(285, 230);
+                pay.setVisible(false);
+                accept.setVisible(false);
+                deny.setVisible(false);
             }
         } else if(isOutside) {
             try {
@@ -549,7 +705,6 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             }
             phone.setVisible(false);
             bakeryButton.setVisible(true);
-            atBeach.setVisible(true);
             goToCasino.setVisible(true);
             home.setVisible(true);
             outside.setVisible(false);
@@ -557,9 +712,8 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             g.setFont(new Font("Arial", Font.BOLD, 30));
             g.drawString("Where would you like to go?", 125, 150);
             bakeryButton.setLocation(125, 200);
-            atBeach.setLocation(425, 200);
+            home.setLocation(425, 200);
             goToCasino.setLocation(275, 200);
-            home.setLocation(285, 250);
         }
     }
     public void playEating() {
@@ -699,16 +853,16 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                 "A really fancy Walgreens.", "Store");
         Property ten = new Property(7500, 400,200, 200, "Colorado", "PoorStore",
                 "The owner is just trying to get rid of it. It doesn't make much money.", "Store");
-        Rectangle on = new Rectangle(120, 100, 10, 10);
-        Rectangle tw = new Rectangle(300, 170, 10, 10);
-        Rectangle thre = new Rectangle(350, 70, 10, 10);
-        Rectangle fou = new Rectangle(410, 170, 10 ,10);
-        Rectangle fiv = new Rectangle(320, 300, 10, 10);
-        Rectangle si = new Rectangle(580, 120, 10, 10);
-        Rectangle seve = new Rectangle(50, 220, 10, 10);
-        Rectangle eigh = new Rectangle(530, 240, 10, 10);
-        Rectangle nin = new Rectangle(530, 350, 10, 10);
-        Rectangle te = new Rectangle(200, 200, 10, 10);
+        Rectangle on = new Rectangle(120, 100, 15, 15);
+        Rectangle tw = new Rectangle(300, 170, 15, 15);
+        Rectangle thre = new Rectangle(350, 70, 15, 15);
+        Rectangle fou = new Rectangle(410, 170, 15 ,15);
+        Rectangle fiv = new Rectangle(320, 300, 15, 15);
+        Rectangle si = new Rectangle(580, 120, 15, 15);
+        Rectangle seve = new Rectangle(50, 220, 15, 15);
+        Rectangle eigh = new Rectangle(530, 240, 15, 15);
+        Rectangle nin = new Rectangle(530, 350, 15, 15);
+        Rectangle te = new Rectangle(200, 200, 15, 15);
         properties.add(one);
         properties.add(two);
         properties.add(three);
@@ -746,17 +900,26 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             if(count<0) {
                 count--;
             }
-            System.out.println(count);
+        }
+        if(missionone || missiontwo) {
+            missionCount++;
         }
     }
     public void mousePressed(MouseEvent e) { }
     public void mouseReleased(MouseEvent e) {
         if (phoneActive) {
+                if(property) {
+                    for (int i = 0; i < propertyRects.size(); i++) {
+                        if (propertyRects.get(i).contains(e.getPoint())) {
+                            count = i;
+                        }
+                    }
+                }
             if(contacts) {
                 if(callSimeon.contains(e.getPoint())) {
-                    System.out.println("calling simeon");
+                    missionone=true;
                 } else if(callLamar.contains(e.getPoint())) {
-                    System.out.println("calling lamar");
+                    missiontwo=true;
                 }
             }
             if(contactsButton.contains(e.getPoint())) {
@@ -767,13 +930,6 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             }
             if(purchases.contains(e.getPoint())) {
                 buying=true;
-            }
-            if(buying) {
-                for(int i=0; i<propertyRects.size(); i++) {
-                    if(propertyRects.get(i).contains(e.getPoint())) {
-                        count=i;
-                    }
-                }
             }
             if(house) {
                 if(tier3) {
@@ -830,7 +986,13 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
 
     }*/
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() instanceof JButton) {
+        if(e.getSource() instanceof Timer) {
+            if(missionone) {
+                if (room == 1) {
+                    time++;
+                }
+            }
+        } else if (e.getSource() instanceof JButton) {
             JButton button = (JButton) e.getSource();
             if (button == phone) {
                 if(!phoneActive) {
@@ -840,6 +1002,10 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                     internet=false;
                     buying=false;
                     contacts=false;
+                    property=false;
+                    house=false;
+                    tier3=false;
+                    tier2=false;
                     buy.setVisible(false);
                     back.setVisible(false);
                     count=-1;
@@ -887,12 +1053,19 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             } else if(button==home) {
                 isOutside=false;
                 bakeryTrue=false;
+                atCasino=false;
                 bakeryButton.setVisible(false);
                 goToCasino.setVisible(false);
                 atBeach.setVisible(false);
                 home.setVisible(false);
                 try {
-                    background = ImageIO.read(new File("src/assets/TierOneHouse.png"));
+                    if(tier==1) {
+                        background = ImageIO.read(new File("src/assets/PropertiesHomes/TierOneHouse.png"));
+                    } else if(tier==2) {
+                        background = ImageIO.read(new File("src/assets/PropertiesHomes/TierTwoHouse.png"));
+                    } else {
+                        background = ImageIO.read(new File("src/assets/PropertiesHomes/TierThreeHouseOne.png"));
+                    }
                 } catch (IOException h) {
                     h.getMessage();
                 }
@@ -900,6 +1073,10 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
             } else if(button==back) {
                 if(phoneActive) {
                     count = -1;
+                } else {
+                    lookingWindow=false;
+                    window.setVisible(false);
+                    back.setVisible(false);
                 }
             } else if(button==buy) {
                 if(house) {
@@ -932,6 +1109,7 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                 }
             } else if(button==hit) {
                 drawCards(cardTurnPlayer);
+                turn=2;
             } else if(button==stand) {
                 if(enemyScore>=18) {
                     if(playerScore>enemyScore) {
@@ -952,13 +1130,36 @@ public class GraphicsPanel extends JPanel implements KeyListener, MouseListener,
                     eft.getMessage();
                 }
             } else if(button==pay) {
+                try {
+                    background = ImageIO.read(new File("src/assets/Casino/CasinoImage.png"));
+                } catch (IOException efg) {
+                    efg.getMessage();
+                }
                 player.changeBalance(-1 * betAmount);playingblackjack = false;dealed = false;bet = false;
+                enemyScore=0;
+                playerScore=0;
             } else if(button==submit) {
                 betAmount = Integer.parseInt(textField.getText());
                 bet=true;
             } else if(button==propertyButton) {
                 property=true;
                 buying=false;
+            } else if(button==window) {
+                lookingWindow=true;
+            } else if(button==accept) {
+                player.changeBalance(betAmount);
+                dealed=false;
+                bet=false;
+                playerScore=0;
+                enemyScore=0;
+                betAmount=-1;
+            } else if(button==deny) {
+                player.changeBalance(betAmount);
+                playingblackjack=false;
+                dealed=false;
+                bet=false;
+                playerScore=0;
+                enemyScore=0;
             } else {
                 buying=false;
                 house=true;
